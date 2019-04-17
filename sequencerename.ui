@@ -1,0 +1,1100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>960</width>
+    <height>512</height>
+   </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Batch Rename</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>6</number>
+    </property>
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>8</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <property name="bottomMargin">
+     <number>8</number>
+    </property>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QFrame" name="preview_frame">
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <layout class="QVBoxLayout" name="preview_verticalLayout">
+        <property name="spacing">
+         <number>4</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QTreeWidget" name="taskList_treeWidget">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DropOnly</enum>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="textElideMode">
+           <enum>Qt::ElideMiddle</enum>
+          </property>
+          <property name="rootIsDecorated">
+           <bool>false</bool>
+          </property>
+          <property name="uniformRowHeights">
+           <bool>true</bool>
+          </property>
+          <property name="itemsExpandable">
+           <bool>false</bool>
+          </property>
+          <property name="sortingEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="animated">
+           <bool>true</bool>
+          </property>
+          <property name="headerHidden">
+           <bool>false</bool>
+          </property>
+          <property name="expandsOnDoubleClick">
+           <bool>false</bool>
+          </property>
+          <attribute name="headerStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Task</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Status</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Count</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Before</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>After</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Path</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Prefix</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Frames</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Extension</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="toolbar_frame">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
+          </property>
+          <layout class="QHBoxLayout" name="toolbar_horizontalLayout">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QToolButton" name="add_toolButton">
+             <property name="minimumSize">
+              <size>
+               <width>64</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QToolButton {
+	padding-right: 12px;
+}
+
+QToolButton:pressed, QToolButton:checked:pressed {
+	padding-right: 11px;
+}
+</string>
+             </property>
+             <property name="text">
+              <string>Add</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/rsc/rsc/icon_add.png</normaloff>
+               <disabledoff>:/rsc/rsc/icon_add_disabled.png</disabledoff>:/rsc/rsc/icon_add.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>15</width>
+               <height>15</height>
+              </size>
+             </property>
+             <property name="popupMode">
+              <enum>QToolButton::InstantPopup</enum>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="remove_toolButton">
+             <property name="minimumSize">
+              <size>
+               <width>64</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Remove</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/rsc/rsc/icon_minus.png</normaloff>
+               <disabledoff>:/rsc/rsc/icon_minus_disabled.png</disabledoff>:/rsc/rsc/icon_minus.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>15</width>
+               <height>15</height>
+              </size>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="clear_toolButton">
+             <property name="minimumSize">
+              <size>
+               <width>64</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Clear</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/rsc/rsc/icon_cross.png</normaloff>
+               <disabledoff>:/rsc/rsc/icon_cross_disabled.png</disabledoff>:/rsc/rsc/icon_cross.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>15</width>
+               <height>15</height>
+              </size>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="fill_toolButton">
+             <property name="minimumSize">
+              <size>
+               <width>64</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QToolButton {
+	padding-right: 12px;
+}
+
+QToolButton:pressed, QToolButton:checked:pressed {
+	padding-right: 11px;
+}
+</string>
+             </property>
+             <property name="text">
+              <string>Fill</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/rsc/rsc/icon_rename.png</normaloff>
+               <disabledoff>:/rsc/rsc/icon_rename_disabled.png</disabledoff>:/rsc/rsc/icon_rename.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>15</width>
+               <height>15</height>
+              </size>
+             </property>
+             <property name="popupMode">
+              <enum>QToolButton::InstantPopup</enum>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="toolbar_horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>8</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QFrame" name="sidebar_frame">
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <layout class="QVBoxLayout" name="sidebar_verticalLayout">
+        <property name="spacing">
+         <number>4</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QScrollArea" name="settings_scrollArea">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+          <property name="noBackground" stdset="0">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="settings_scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>485</width>
+             <height>468</height>
+            </rect>
+           </property>
+           <property name="noBackground" stdset="0">
+            <bool>true</bool>
+           </property>
+           <layout class="QVBoxLayout" name="settings_verticalLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QGroupBox" name="findReplace_groupBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Text substitution</string>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <property name="expandable" stdset="0">
+               <bool>true</bool>
+              </property>
+              <property name="xmlCategory" stdset="0">
+               <string>textsubstitution</string>
+              </property>
+              <layout class="QFormLayout" name="findReplace_formLayout">
+               <property name="fieldGrowthPolicy">
+                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+               </property>
+               <property name="labelAlignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="leftMargin">
+                <number>8</number>
+               </property>
+               <property name="topMargin">
+                <number>8</number>
+               </property>
+               <property name="rightMargin">
+                <number>8</number>
+               </property>
+               <property name="bottomMargin">
+                <number>8</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="find_label">
+                 <property name="text">
+                  <string>Find:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>find_comboBox</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="find_comboBox">
+                 <property name="editable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="maxCount">
+                  <number>10</number>
+                 </property>
+                 <property name="insertPolicy">
+                  <enum>QComboBox::InsertAtTop</enum>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>find</string>
+                 </property>
+                 <property name="storeHistory" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="replace_label">
+                 <property name="text">
+                  <string>Replace:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>replace_comboBox</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="replace_comboBox">
+                 <property name="editable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="maxCount">
+                  <number>10</number>
+                 </property>
+                 <property name="insertPolicy">
+                  <enum>QComboBox::InsertAtTop</enum>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>replace</string>
+                 </property>
+                 <property name="storeHistory" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="findReplaceOptions_horizontalLayout">
+                 <item>
+                  <widget class="QCheckBox" name="ignoreCase_checkBox">
+                   <property name="text">
+                    <string>Ignore case</string>
+                   </property>
+                   <property name="xmlTag" stdset="0">
+                    <string>ignorecase</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="regex_checkBox">
+                   <property name="text">
+                    <string>Regular expression</string>
+                   </property>
+                   <property name="xmlTag" stdset="0">
+                    <string>regex</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="renumber_groupBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Renumber</string>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <property name="expandable" stdset="0">
+               <bool>true</bool>
+              </property>
+              <property name="xmlCategory" stdset="0">
+               <string>renumber</string>
+              </property>
+              <layout class="QFormLayout" name="renumber_formLayout">
+               <property name="fieldGrowthPolicy">
+                <enum>QFormLayout::ExpandingFieldsGrow</enum>
+               </property>
+               <property name="labelAlignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="leftMargin">
+                <number>8</number>
+               </property>
+               <property name="topMargin">
+                <number>8</number>
+               </property>
+               <property name="rightMargin">
+                <number>8</number>
+               </property>
+               <property name="bottomMargin">
+                <number>8</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="preserveNumbering_checkBox">
+                 <property name="text">
+                  <string>Preserve current numbering</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>preservenumbering</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="start_label">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Start from:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>start_spinBox</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="start_spinBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="maximum">
+                  <number>999999999</number>
+                 </property>
+                 <property name="value">
+                  <number>1</number>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>numberingstart</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="step_label">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Step:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>step_spinBox</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="step_spinBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>999999999</number>
+                 </property>
+                 <property name="value">
+                  <number>1</number>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>numberingstep</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QCheckBox" name="autoPadding_checkBox">
+                 <property name="text">
+                  <string>Auto padding</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>autopadding</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="padding_label">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Padding:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>padding_spinBox</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="padding_spinBox">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>16</number>
+                 </property>
+                 <property name="value">
+                  <number>4</number>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>padding</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="ext_groupBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Extension</string>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <property name="expandable" stdset="0">
+               <bool>true</bool>
+              </property>
+              <property name="xmlCategory" stdset="0">
+               <string>extension</string>
+              </property>
+              <layout class="QFormLayout" name="renumber_formLayout_2">
+               <property name="fieldGrowthPolicy">
+                <enum>QFormLayout::ExpandingFieldsGrow</enum>
+               </property>
+               <property name="labelAlignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="leftMargin">
+                <number>8</number>
+               </property>
+               <property name="topMargin">
+                <number>8</number>
+               </property>
+               <property name="rightMargin">
+                <number>8</number>
+               </property>
+               <property name="bottomMargin">
+                <number>8</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="ext_checkBox">
+                 <property name="text">
+                  <string>Change filename extension</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>changeext</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="ext_label">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Extension:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>ext_lineEdit</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="ext_lineEdit">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>newext</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="other_groupBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Other options</string>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <property name="expandable" stdset="0">
+               <bool>true</bool>
+              </property>
+              <property name="xmlCategory" stdset="0">
+               <string>other</string>
+              </property>
+              <layout class="QFormLayout" name="other_formLayout">
+               <property name="fieldGrowthPolicy">
+                <enum>QFormLayout::ExpandingFieldsGrow</enum>
+               </property>
+               <property name="labelAlignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="leftMargin">
+                <number>8</number>
+               </property>
+               <property name="topMargin">
+                <number>8</number>
+               </property>
+               <property name="rightMargin">
+                <number>8</number>
+               </property>
+               <property name="bottomMargin">
+                <number>8</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="ignoreErrors_checkBox">
+                 <property name="text">
+                  <string>Ignore errors</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <property name="xmlTag" stdset="0">
+                  <string>continueonerror</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="sidebarToolbar_frame">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
+          </property>
+          <layout class="QHBoxLayout" name="sidebarToolbar_horizontalLayout">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="rename_pushButton">
+             <property name="minimumSize">
+              <size>
+               <width>64</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Rename</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>15</width>
+               <height>15</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="rename_progressBar"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="cancel_pushButton">
+             <property name="minimumSize">
+              <size>
+               <width>64</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Cancel</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>15</width>
+               <height>15</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>taskList_treeWidget</tabstop>
+  <tabstop>add_toolButton</tabstop>
+  <tabstop>remove_toolButton</tabstop>
+  <tabstop>clear_toolButton</tabstop>
+  <tabstop>fill_toolButton</tabstop>
+  <tabstop>settings_scrollArea</tabstop>
+  <tabstop>find_comboBox</tabstop>
+  <tabstop>replace_comboBox</tabstop>
+  <tabstop>ignoreCase_checkBox</tabstop>
+  <tabstop>regex_checkBox</tabstop>
+  <tabstop>preserveNumbering_checkBox</tabstop>
+  <tabstop>start_spinBox</tabstop>
+  <tabstop>step_spinBox</tabstop>
+  <tabstop>autoPadding_checkBox</tabstop>
+  <tabstop>padding_spinBox</tabstop>
+  <tabstop>ext_checkBox</tabstop>
+  <tabstop>ext_lineEdit</tabstop>
+  <tabstop>ignoreErrors_checkBox</tabstop>
+  <tabstop>rename_pushButton</tabstop>
+  <tabstop>cancel_pushButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="rsc.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>autoPadding_checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>padding_spinBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>572</x>
+     <y>230</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>527</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>preserveNumbering_checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>start_label</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>642</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>479</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>preserveNumbering_checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>start_spinBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>642</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>560</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>preserveNumbering_checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>step_label</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>642</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>479</x>
+     <y>207</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>preserveNumbering_checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>step_spinBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>642</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>560</x>
+     <y>207</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>autoPadding_checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>padding_label</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>572</x>
+     <y>230</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>479</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ext_checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ext_lineEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>636</x>
+     <y>310</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>781</x>
+     <y>336</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ext_checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ext_label</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>636</x>
+     <y>310</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>477</x>
+     <y>336</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
