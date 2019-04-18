@@ -6,7 +6,8 @@
 # (c) 2018-2019
 #
 # Sequence Rename Tool
-# A popup UI to display an expanded file sequence.
+# A popup UI to display an expanded view of all the individual files in a
+# sequence, before and after the rename operation.
 
 
 from Qt import QtCore, QtWidgets

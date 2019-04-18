@@ -28,6 +28,8 @@ import ui_template as UI
 # Configuration
 # ----------------------------------------------------------------------------
 
+VERSION = "0.1.1"
+
 cfg = {}
 
 # Set window title and object names
@@ -58,9 +60,10 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		self.parent = parent
 
 		self.setupUI(**cfg)
+		self.conformFormLayoutLabels(self.ui.sidebar_frame)
 
 		# Set window icon, flags and other Qt attributes
-		self.setWindowIcon(self.iconSet('icon_rename.png', tintNormal=True))
+		self.setWindowIcon(self.iconSet('icon_rename.png', tintNormal=False))
 		self.setWindowFlags(QtCore.Qt.Window)
 		#self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
 
@@ -96,24 +99,35 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		self.ui.clear_toolButton.clicked.connect(self.clearTaskList)
 		self.ui.rename_pushButton.clicked.connect(self.performFileRename)
 		self.ui.cancel_pushButton.clicked.connect(self.cancelRename)
-
-		self.ui.add_toolButton.setIcon(self.iconSet('list-add.svg'))
-		self.ui.remove_toolButton.setIcon(self.iconSet('list-remove.svg'))
-		self.ui.clear_toolButton.setIcon(self.iconSet('paint-none.svg'))
-		self.ui.fill_toolButton.setIcon(self.iconSet('edit-find-replace.svg'))
+		self.ui.about_toolButton.clicked.connect(self.about)
 
 		# Context menus
-		self.addContextMenu(self.ui.add_toolButton, "Directory...", self.addDirectory) #, 'icon_folder')
-		self.addContextMenu(self.ui.add_toolButton, "Sequence...", self.addSequence) #, 'icon_file_sequence')
+		self.addContextMenu(self.ui.add_toolButton, "Directory...", self.addDirectory)
+		self.addContextMenu(self.ui.add_toolButton, "Sequence...", self.addSequence)
 
 		self.addContextMenu(self.ui.fill_toolButton, "Copy filename prefix to 'Find' field", self.loadFindStr)
 		self.addContextMenu(self.ui.fill_toolButton, "Copy filename prefix to 'Replace' field", self.loadReplaceStr)
 
+		# Add tool button icons
+		self.ui.add_toolButton.setIcon(self.iconSet('list-add.svg'))
+		self.ui.remove_toolButton.setIcon(self.iconSet('list-remove.svg'))
+		self.ui.clear_toolButton.setIcon(self.iconSet('paint-none.svg'))
+		self.ui.fill_toolButton.setIcon(self.iconSet('edit-find-replace.svg'))
+		self.ui.about_toolButton.setIcon(self.iconSet('help-about.svg'))
+
 		# Define status icons
-		self.readyIcon = self.iconSet('status_icon_ready.png', tintNormal=False)
-		self.nullIcon = self.iconSet('status_icon_null.png', tintNormal=False)
-		self.doneIcon = self.iconSet('status_icon_done.png', tintNormal=False)
-		self.errorIcon = self.iconSet('status_icon_error.png', tintNormal=False)
+		self.icon = {}
+		self.icon['ready'] = self.iconSet('status_icon_ready.png', tintNormal=False)
+		self.icon['null'] = self.iconSet('status_icon_null.png', tintNormal=False)
+		self.icon['done'] = self.iconSet('status_icon_done.png', tintNormal=False)
+		self.icon['error'] = self.iconSet('status_icon_error.png', tintNormal=False)
+
+		# Define colours
+		# self.col = {}  # Already declared in ui_template.py
+		self.col['ready'] = QtGui.QColor(112, 158, 50)
+		self.col['null'] = QtGui.QColor(101, 101, 101)
+		self.col['done'] = QtGui.QColor(101, 217, 238)
+		self.col['error'] = QtGui.QColor(248, 38, 114)
 
 		# Set input validators
 		alphanumeric_filename_validator = QtGui.QRegExpValidator(QtCore.QRegExp(r'[\w\.-]+'), self.ui.replace_comboBox)
@@ -125,8 +139,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		self.lastDir = None
 		self.expertMode = False
 
-		# Get current dir in which to rename files, and update render layer
-		# tree view widget (but only when running as standalone app)
+		# Get current dir in which to rename files, and update widget if
+		# running as standalone app
 		if __name__ == "__main__":
 			self.updateTaskListDir(os.getcwd())
 
@@ -166,10 +180,10 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		""" Toggle visiblity of columns in the task list view.
 		"""
 		self.expertMode = not self.expertMode
-		self.ui.taskList_treeWidget.setColumnHidden(0, self.expertMode)
-		self.ui.taskList_treeWidget.setColumnHidden(6, self.expertMode)
-		self.ui.taskList_treeWidget.setColumnHidden(7, self.expertMode)
-		self.ui.taskList_treeWidget.setColumnHidden(8, self.expertMode)
+		columns = ['Task', 'Prefix', 'Frames', 'Extension']
+
+		for column in columns:
+			self.ui.taskList_treeWidget.setColumnHidden(self.header(column), self.expertMode)
 
 
 	def header(self, text):
@@ -202,10 +216,10 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		"""
 		if self.lastDir:
 			browseDir = self.lastDir
-		elif os.environ.get('MAYARENDERSDIR') is not None:
-			browseDir = os.environ['MAYARENDERSDIR']
+		elif os.environ.get('UHUB_MAYA_RENDERS_PATH') is not None:
+			browseDir = os.environ['UHUB_MAYA_RENDERS_PATH']
 		else:
-			browseDir = os.environ.get('FILESYSTEMROOT', os.getcwd())
+			browseDir = os.getcwd()
 
 		return browseDir
 
@@ -284,10 +298,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			   item.text(self.header("Prefix")) == prefix and \
 			   item.text(self.header("Extension")) == ext:
 				if item.text(self.header("Frames")) == fr_range:
-					#verbose.print_("Task item already exists.")
 					print("Task item already exists.")
 				else:
-					#verbose.print_("Task item already exists but frame ranges differ. Updating item with new frame range.")
 					print("Task item already exists but frame ranges differ. Updating item with new frame range.")
 					item.setText(self.header("Frames"), fr_range)
 					item.setText(self.header("Count"), str(num_frames))
@@ -314,11 +326,18 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			item = root.child(index)
 			item.setText(self.header("Status"), status)
 			if status == "Complete":
-				item.setIcon(self.header("Status"), self.doneIcon)
-				item.setForeground(self.header("Status"), QtGui.QColor(101, 217, 238))
+				item.setIcon(self.header("Status"), self.icon['done'])
+				item.setForeground(self.header("Status"), self.col['done'])
+
+				item.setBackground(self.header("After"), QtGui.QBrush())
+				item.setForeground(self.header("After"), self.col['null'])
 			else:
-				item.setIcon(self.header("Status"), self.errorIcon)
-				item.setForeground(self.header("Status"), QtGui.QColor(248, 38, 114))
+				item.setIcon(self.header("Status"), self.icon['error'])
+				item.setForeground(self.header("Status"), self.col['error'])
+
+				item.setBackground(self.header("After"), QtGui.QBrush())
+				item.setForeground(self.header("After"), self.col['error'])
+
 			item.setText(self.header("Path"), path)
 			item.setText(self.header("Prefix"), prefix)
 			item.setText(self.header("Frames"), fr_range)
@@ -390,21 +409,25 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			if updateStatus:
 				if file == renamedFile:
 					item.setText(self.header("Status"), "Nothing to change")
-					item.setIcon(self.header("Status"), self.nullIcon)
-					item.setForeground(self.header("Status"), QtGui.QColor(102, 102, 102))
+					item.setIcon(self.header("Status"), self.icon['null'])
+					item.setForeground(self.header("Status"), self.col['null'])
+
+					item.setBackground(self.header("After"), QtGui.QBrush())
+					item.setForeground(self.header("After"), self.col['null'])
+
 				else:
 					item.setText(self.header("Status"), "Ready")
-					item.setIcon(self.header("Status"), self.readyIcon)
-					item.setForeground(self.header("Status"), QtGui.QColor(112, 158, 50))
-					rename_count += num_frames
+					item.setIcon(self.header("Status"), self.icon['ready'])
+					item.setForeground(self.header("Status"), self.col['ready'])
 
-			#self.addContextMenu(item, "Copy to 'Find' field", self.loadFindStr)
-			#item.setExpanded(True)
+					item.setBackground(self.header("After"), QtGui.QBrush())
+					item.setForeground(self.header("After"), self.col['ready'])
+
+					rename_count += num_frames
 
 			total_count += num_frames
 
 		# Resize columns
-		#if self.renameTaskLs:
 		if child_count:
 			for col in range(self.ui.taskList_treeWidget.columnCount()):
 				self.ui.taskList_treeWidget.resizeColumnToContents(col)
@@ -415,8 +438,12 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 		# Update button text
 		if rename_count:
-			self.ui.rename_pushButton.setText("Rename %d Files" %rename_count)
 			self.ui.rename_progressBar.setMaximum(rename_count)
+			if rename_count == 1:
+				self.ui.rename_pushButton.setText("Rename 1 file")
+			else:
+				self.ui.rename_pushButton.setText("Rename %d files" %rename_count)
+
 		else:
 			self.ui.rename_pushButton.setText("Rename")
 
@@ -425,6 +452,36 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			self.ui.rename_pushButton.setEnabled(True)
 		else:
 			self.ui.rename_pushButton.setEnabled(False)
+
+
+	def about(self):
+		""" Show about dialog.
+		"""
+		import about
+
+		info_ls = []
+		sep = " | "
+		for key, value in self.getInfo().items():
+			if key in ['Environment', 'OS']:
+				pass
+			else:
+				info_ls.append("{} {} ".format(key, value))
+		info_str = sep.join(info_ls)
+
+		about_msg = """
+%s
+v%s
+
+A tool for batch renaming and renumbering sequences of files.
+
+Developer: Mike Bonnington
+(c) 2016-2019
+
+%s
+""" % (cfg['window_title'], VERSION, info_str)
+
+		aboutDialog = about.AboutDialog(parent=self)
+		aboutDialog.display(icon_pixmap=self.iconTint('icon_rename.png', tint=QtGui.QColor(109, 113, 115)), message=about_msg)
 
 
 	def expandTask(self, item, column):
@@ -461,8 +518,11 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			outpath = "%s/%s" %(item.text(self.header("Path")), item.text(self.header("After")))
 			if outpath.lower() in conflicts:
 				item.setText(self.header("Status"), "Output filename conflict")
-				item.setIcon(self.header("Status"), self.errorIcon)
-				item.setForeground(self.header("Status"), QtGui.QColor(248, 38, 114))
+				item.setIcon(self.header("Status"), self.icon['error'])
+				item.setForeground(self.header("Status"), self.col['error'])
+
+				item.setBackground(self.header("After"), self.col['error'])
+				item.setForeground(self.header("After"), self.col['highlighted-text'])
 
 		# # Check for conflicts with existing files on disk
 		# for item in children:
@@ -470,13 +530,12 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		# 		if not item.text(self.header("Before")) == item.text(self.header("After")):
 		# 			if os.path.isfile(file):
 		# 				item.setText(self.header("Status"), "File exists error")
-		# 				item.setIcon(self.header("Status"), self.errorIcon)
-		# 				item.setForeground(self.header("Status"), QtGui.QColor(248, 38, 114))
+		# 				item.setIcon(self.header("Status"), self.icon['error'])
+		# 				item.setForeground(self.header("Status"), self.col['error'])
 
 		self.ui.taskList_treeWidget.resizeColumnToContents(self.header("Status"))
 
 		if len(conflicts):
-			#verbose.warning("%d rename %s found." %(len(conflicts), verbose.pluralise("conflict", len(conflicts))))
 			print("Warning: %d rename conflict(s) found." %len(conflicts))
 
 		return len(conflicts)
@@ -535,12 +594,20 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			items_to_process, 
 			ignore_errors=self.getCheckBoxValue(self.ui.ignoreErrors_checkBox))
 		# self.workerThread.printError.connect(verbose.error)
+		self.workerThread.printError.connect(self.error)
 		# self.workerThread.printMessage.connect(verbose.message)
 		# self.workerThread.printProgress.connect(verbose.progress)
 		self.workerThread.updateProgressBar.connect(self.updateProgressBar)
 		self.workerThread.taskCompleted.connect(self.taskCompleted)
 		self.workerThread.finished.connect(self.renameCompleted)
 		self.workerThread.start()
+
+
+	def error(self, message):
+		""" Print an error message to stdout.
+			Use ANSI escape sequences to colour the text red.
+		"""
+		print('\033[38;5;197m' + "ERROR: " + message + '\033[0m')
 
 
 	@QtCore.Slot(int)
@@ -565,7 +632,6 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 	def renameCompleted(self):
 		""" Function to execute when the rename operation finishes.
 		"""
-		#verbose.message("Batch rename job completed.")
 		print("Batch rename job completed.")
 
 		self.ui.rename_pushButton.show()
@@ -577,7 +643,6 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		""" Stop the rename operation.
 			TODO: Need to clean up incomplete tasks
 		"""
-		#verbose.message("Aborting rename job.")
 		print("Aborting rename job.")
 		self.workerThread.terminate()  # Enclose in try/except?
 
@@ -692,8 +757,8 @@ class BatchRenameThread(QtCore.QThread):
 				self.printProgress.emit("Renaming %d%%" %progress)
 			else:
 				errors += 1
+				self.printError.emit(msg)
 				if not self.ignore_errors:  # Task stopped due to error
-					self.printError.emit(msg)
 					return task_id, "Interrupted", src_fileLs[-1]
 
 			self.files_processed += 1

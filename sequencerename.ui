@@ -78,6 +78,9 @@
           <property name="acceptDrops">
            <bool>true</bool>
           </property>
+          <property name="toolTip">
+           <string>Add sequences to rename by dragging and dropping files or folders on to this window, or use the 'Add' button below.</string>
+          </property>
           <property name="dragDropMode">
            <enum>QAbstractItemView::DropOnly</enum>
           </property>
@@ -219,8 +222,8 @@ QToolButton:pressed, QToolButton:checked:pressed {
              </property>
              <property name="iconSize">
               <size>
-               <width>15</width>
-               <height>15</height>
+               <width>21</width>
+               <height>21</height>
               </size>
              </property>
              <property name="popupMode">
@@ -249,8 +252,8 @@ QToolButton:pressed, QToolButton:checked:pressed {
              </property>
              <property name="iconSize">
               <size>
-               <width>15</width>
-               <height>15</height>
+               <width>21</width>
+               <height>21</height>
               </size>
              </property>
              <property name="toolButtonStyle">
@@ -276,8 +279,8 @@ QToolButton:pressed, QToolButton:checked:pressed {
              </property>
              <property name="iconSize">
               <size>
-               <width>15</width>
-               <height>15</height>
+               <width>21</width>
+               <height>21</height>
               </size>
              </property>
              <property name="toolButtonStyle">
@@ -313,8 +316,8 @@ QToolButton:pressed, QToolButton:checked:pressed {
              </property>
              <property name="iconSize">
               <size>
-               <width>15</width>
-               <height>15</height>
+               <width>21</width>
+               <height>21</height>
               </size>
              </property>
              <property name="popupMode">
@@ -337,6 +340,22 @@ QToolButton:pressed, QToolButton:checked:pressed {
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QToolButton" name="about_toolButton">
+             <property name="toolTip">
+              <string>About Seqeunce Rename</string>
+             </property>
+             <property name="text">
+              <string>About...</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>21</width>
+               <height>21</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
