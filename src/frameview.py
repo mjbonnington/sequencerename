@@ -1,19 +1,21 @@
 #!/usr/bin/python
 
-# rename_frame_view.py
+# frameview.py
 #
-# Mike Bonnington <mike.bonnington@gps-ldn.com>
-# (c) 2018-2019
+# Mike Bonnington <mjbonnington@gmail.com>
+# (c) 2018-2021
 #
-# Sequence Rename Tool
+# Sequence Rename Tool Frame View
 # A popup UI to display an expanded view of all the individual files in a
 # sequence, before and after the rename operation.
 
 
+import os
+
 from Qt import QtCore, QtWidgets
+import ui_template as UI
 
 # Import custom modules
-import ui_template as UI
 
 
 # ----------------------------------------------------------------------------
@@ -23,12 +25,12 @@ import ui_template as UI
 cfg = {}
 
 # Set window title and object names
-cfg['window_title'] = "Frame View"
 cfg['window_object'] = "frameViewUI"
+cfg['window_title'] = "Frame View"
 
 # Set the UI and the stylesheet
-cfg['ui_file'] = "rename_frame_view_ui.ui"
-cfg['stylesheet'] = "style.qss"  # Set to None to use the parent app's stylesheet
+cfg['ui_file'] = os.path.join(os.path.dirname(__file__), 'forms', 'frameview.ui')
+cfg['stylesheet'] = None
 
 # Other options
 cfg['store_window_geometry'] = True
@@ -39,8 +41,8 @@ cfg['store_window_geometry'] = True
 # ----------------------------------------------------------------------------
 
 class dialog(QtWidgets.QDialog, UI.TemplateUI):
-	""" Main dialog class.
-	"""
+	"""Main dialog class."""
+
 	def __init__(self, parent=None):
 		super(dialog, self).__init__(parent)
 		self.parent = parent
@@ -52,8 +54,8 @@ class dialog(QtWidgets.QDialog, UI.TemplateUI):
 
 
 	def display(self, src_file_list, dst_file_list):
-		""" Display the dialog.
-		"""
+		"""Display the dialog."""
+
 		self.ui.frameList_treeWidget.clear()
 
 		for row in range(len(src_file_list)):
@@ -68,6 +70,6 @@ class dialog(QtWidgets.QDialog, UI.TemplateUI):
 
 
 	def hideEvent(self, event):
-		""" Event handler for when window is hidden.
-		"""
+		"""Event handler for when window is hidden."""
+
 		self.storeWindow()  # Store window geometry

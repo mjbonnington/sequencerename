@@ -202,28 +202,13 @@
                <height>0</height>
               </size>
              </property>
-             <property name="styleSheet">
-              <string notr="true">QToolButton {
-	padding-right: 12px;
-}
-
-QToolButton:pressed, QToolButton:checked:pressed {
-	padding-right: 11px;
-}
-</string>
-             </property>
              <property name="text">
               <string>Add</string>
              </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>:/rsc/rsc/icon_add.png</normaloff>
-               <disabledoff>:/rsc/rsc/icon_add_disabled.png</disabledoff>:/rsc/rsc/icon_add.png</iconset>
-             </property>
              <property name="iconSize">
               <size>
-               <width>21</width>
-               <height>21</height>
+               <width>15</width>
+               <height>15</height>
               </size>
              </property>
              <property name="popupMode">
@@ -245,15 +230,10 @@ QToolButton:pressed, QToolButton:checked:pressed {
              <property name="text">
               <string>Remove</string>
              </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>:/rsc/rsc/icon_minus.png</normaloff>
-               <disabledoff>:/rsc/rsc/icon_minus_disabled.png</disabledoff>:/rsc/rsc/icon_minus.png</iconset>
-             </property>
              <property name="iconSize">
               <size>
-               <width>21</width>
-               <height>21</height>
+               <width>15</width>
+               <height>15</height>
               </size>
              </property>
              <property name="toolButtonStyle">
@@ -272,15 +252,10 @@ QToolButton:pressed, QToolButton:checked:pressed {
              <property name="text">
               <string>Clear</string>
              </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>:/rsc/rsc/icon_cross.png</normaloff>
-               <disabledoff>:/rsc/rsc/icon_cross_disabled.png</disabledoff>:/rsc/rsc/icon_cross.png</iconset>
-             </property>
              <property name="iconSize">
               <size>
-               <width>21</width>
-               <height>21</height>
+               <width>15</width>
+               <height>15</height>
               </size>
              </property>
              <property name="toolButtonStyle">
@@ -296,28 +271,13 @@ QToolButton:pressed, QToolButton:checked:pressed {
                <height>0</height>
               </size>
              </property>
-             <property name="styleSheet">
-              <string notr="true">QToolButton {
-	padding-right: 12px;
-}
-
-QToolButton:pressed, QToolButton:checked:pressed {
-	padding-right: 11px;
-}
-</string>
-             </property>
              <property name="text">
               <string>Fill</string>
              </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>:/rsc/rsc/icon_rename.png</normaloff>
-               <disabledoff>:/rsc/rsc/icon_rename_disabled.png</disabledoff>:/rsc/rsc/icon_rename.png</iconset>
-             </property>
              <property name="iconSize">
               <size>
-               <width>21</width>
-               <height>21</height>
+               <width>15</width>
+               <height>15</height>
               </size>
              </property>
              <property name="popupMode">
@@ -351,8 +311,8 @@ QToolButton:pressed, QToolButton:checked:pressed {
              </property>
              <property name="iconSize">
               <size>
-               <width>21</width>
-               <height>21</height>
+               <width>15</width>
+               <height>15</height>
               </size>
              </property>
             </widget>
@@ -404,8 +364,8 @@ QToolButton:pressed, QToolButton:checked:pressed {
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>485</width>
-             <height>468</height>
+             <width>427</width>
+             <height>545</height>
             </rect>
            </property>
            <property name="noBackground" stdset="0">
@@ -983,9 +943,7 @@ QToolButton:pressed, QToolButton:checked:pressed {
   <tabstop>rename_pushButton</tabstop>
   <tabstop>cancel_pushButton</tabstop>
  </tabstops>
- <resources>
-  <include location="rsc.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>autoPadding_checkBox</sender>

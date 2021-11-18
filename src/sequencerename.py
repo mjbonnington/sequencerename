@@ -3,11 +3,13 @@
 # sequencerename.py
 #
 # Mike Bonnington <mjbonnington@gmail.com>
-# (c) 2016-2019
+# (c) 2016-2021
 #
 # Sequence Rename Tool
 # A UI for batch renaming and renumbering sequences of files.
+#
 # TODO: Use unified dialog & methods for Maya advanced rename tools.
+# TODO: Use pyseq or fileseq instead of custom sequence.py library.
 
 
 import os
@@ -15,46 +17,44 @@ import re
 import sys
 
 from Qt import QtCore, QtGui, QtWidgets
+import ui_template as UI
 
 # Import custom modules
-import oswrapper
+import frameview
+import os_wrapper
 import rename
 import sequence
-
-import ui_template as UI
 
 
 # ----------------------------------------------------------------------------
 # Configuration
 # ----------------------------------------------------------------------------
 
-VERSION = "0.1.1"
-
 cfg = {}
 
 # Set window title and object names
+cfg['window_object'] = "seqRenameUI"
 cfg['window_title'] = "Sequence Rename"
-cfg['window_object'] = "SequenceRenameUI"
 
 # Set the UI and the stylesheet
-cfg['ui_file'] = "sequencerename.ui"
-cfg['stylesheet'] = "style.qss"  # Set to None to use the parent app's stylesheet
+cfg['ui_file'] = os.path.join(os.path.dirname(__file__), 'forms', 'sequencerename.ui')
+cfg['stylesheet'] = 'style.qss'
+cfg['icon'] = 'icon-rename.png'
 
 # Other options
-prefs_location = os.path.expanduser('~/.sequencerename')
+prefs_location = os.getenv('IC_USERPREFSDIR', os.path.expanduser('~/.sequencerename'))
 if not os.path.isdir(prefs_location):
 	os.makedirs(prefs_location)
-cfg['prefs_file'] = os.path.join(prefs_location, 'prefs.json')
+cfg['prefs_file'] = os.path.join(prefs_location, 'sequencerename_prefs.json')
 cfg['store_window_geometry'] = True
-
 
 # ----------------------------------------------------------------------------
 # Begin main application class
 # ----------------------------------------------------------------------------
 
 class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
-	""" Sequence Rename Tool application class.
-	"""
+	"""Sequence Rename Tool application class."""
+
 	def __init__(self, parent=None):
 		super(SequenceRenameApp, self).__init__(parent)
 		self.parent = parent
@@ -63,15 +63,25 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		self.conformFormLayoutLabels(self.ui.sidebar_frame)
 
 		# Set window icon, flags and other Qt attributes
-		self.setWindowIcon(self.iconSet('icon_rename.png', tintNormal=False))
+		# self.setWindowIcon(self.iconSet(cfg['icon'], tintNormal=False))
 		self.setWindowFlags(QtCore.Qt.Window)
 		#self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
 
 		# Restore splitter size state
-		try:
-			self.ui.splitter.restoreState(self.settings.value("splitterSizes")) #.toByteArray())
-		except:
-			pass
+		self.restoreWidgetState(self.ui.splitter, "splitterSizes")
+		# try:
+		# 	self.ui.splitter.restoreState(self.settings.value("splitterSizes")) #.toByteArray())
+		# except:
+		# 	pass
+
+		# Set up about dialog
+		about = lambda: self.about(
+			app_name=cfg['window_title'], 
+			app_version="v" + os.getenv('REZ_IC_SEQRENAME_VERSION'), 
+			description="A tool for batch renaming and renumbering sequences of files.\n", 
+			credits="Developer: Mike Bonnington", 
+			icon=self.iconTint(cfg['icon']), 
+		)
 
 		# Set up keyboard shortcuts
 		self.shortcutExpertMode = QtWidgets.QShortcut(self)
@@ -99,7 +109,7 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		self.ui.clear_toolButton.clicked.connect(self.clearTaskList)
 		self.ui.rename_pushButton.clicked.connect(self.performFileRename)
 		self.ui.cancel_pushButton.clicked.connect(self.cancelRename)
-		self.ui.about_toolButton.clicked.connect(self.about)
+		self.ui.about_toolButton.clicked.connect(about)
 
 		# Context menus
 		self.addContextMenu(self.ui.add_toolButton, "Directory...", self.addDirectory)
@@ -109,25 +119,27 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		self.addContextMenu(self.ui.fill_toolButton, "Copy filename prefix to 'Replace' field", self.loadReplaceStr)
 
 		# Add tool button icons
-		self.ui.add_toolButton.setIcon(self.iconSet('list-add.svg'))
-		self.ui.remove_toolButton.setIcon(self.iconSet('list-remove.svg'))
-		self.ui.clear_toolButton.setIcon(self.iconSet('paint-none.svg'))
+		self.ui.add_toolButton.setIcon(self.iconSet('add.svg'))
+		self.ui.remove_toolButton.setIcon(self.iconSet('remove.svg'))
+		self.ui.clear_toolButton.setIcon(self.iconSet('clear.svg'))
 		self.ui.fill_toolButton.setIcon(self.iconSet('edit-find-replace.svg'))
 		self.ui.about_toolButton.setIcon(self.iconSet('help-about.svg'))
 
-		# Define status icons
-		self.icon = {}
-		self.icon['ready'] = self.iconSet('status_icon_ready.png', tintNormal=False)
-		self.icon['null'] = self.iconSet('status_icon_null.png', tintNormal=False)
-		self.icon['done'] = self.iconSet('status_icon_done.png', tintNormal=False)
-		self.icon['error'] = self.iconSet('status_icon_error.png', tintNormal=False)
-
 		# Define colours
 		# self.col = {}  # Already declared in ui_template.py
-		self.col['ready'] = QtGui.QColor(112, 158, 50)
-		self.col['null'] = QtGui.QColor(101, 101, 101)
-		self.col['done'] = QtGui.QColor(101, 217, 238)
-		self.col['error'] = QtGui.QColor(248, 38, 114)
+		self.col['ready'] = QtGui.QColor('#99c696')
+		self.col['null'] = QtGui.QColor('#5c616c')
+		self.col['done'] = QtGui.QColor('#6897c8')
+		self.col['error'] = QtGui.QColor('#e96168')
+
+		# Define status icons & tint with colours defined above
+		self.icon = {}
+		for status in ['ready', 'null', 'done', 'error']:
+			self.icon[status] = self.iconSet('status-icon-%s.png' % status, tintNormal=self.col[status])
+		# self.icon['ready'] = self.iconSet('status-icon-ready.png', tintNormal=self.col['ready'])
+		# self.icon['null'] = self.iconSet('status-icon-null.png', tintNormal=self.col['null'])
+		# self.icon['done'] = self.iconSet('status-icon-done.png', tintNormal=self.col['done'])
+		# self.icon['error'] = self.iconSet('status-icon-error.png', tintNormal=self.col['error'])
 
 		# Set input validators
 		alphanumeric_filename_validator = QtGui.QRegExpValidator(QtCore.QRegExp(r'[\w\.-]+'), self.ui.replace_comboBox)
@@ -152,8 +164,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def updateToolbarUI(self):
-		""" Update the toolbar UI based on the current selection.
-		"""
+		"""Update the toolbar UI based on the current selection."""
+
 		# No items selected...
 		if len(self.ui.taskList_treeWidget.selectedItems()) == 0:
 			self.ui.remove_toolButton.setEnabled(False)
@@ -177,8 +189,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def toggleHiddenColumns(self):
-		""" Toggle visiblity of columns in the task list view.
-		"""
+		"""Toggle visiblity of columns in the task list view."""
+
 		self.expertMode = not self.expertMode
 		columns = ['Task', 'Prefix', 'Frames', 'Extension']
 
@@ -187,8 +199,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def header(self, text):
-		""" Returns the column number for the specified header text.
-		"""
+		"""Return the column number for the specified header text."""
+
 		for col in range(self.ui.taskList_treeWidget.columnCount()):
 			if text == self.ui.taskList_treeWidget.headerItem().text(col):
 				return col
@@ -197,8 +209,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def getChildItems(self, widget):
-		""" Return all top-level child items of the specified widget.
-		"""
+		"""Return all top-level child items of the specified widget."""
+
 		items = []
 		root = widget.invisibleRootItem()
 
@@ -212,12 +224,12 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def getBrowseDir(self):
-		""" Decide which directory to start browsing from.
-		"""
+		"""Decide which directory to start browsing from."""
+
 		if self.lastDir:
 			browseDir = self.lastDir
-		elif os.environ.get('UHUB_MAYA_RENDERS_PATH') is not None:
-			browseDir = os.environ['UHUB_MAYA_RENDERS_PATH']
+		elif os.environ.get('IC_MAYA_RENDERS_DIR') is not None:
+			browseDir = os.environ['IC_MAYA_RENDERS_DIR']
 		else:
 			browseDir = os.getcwd()
 
@@ -225,28 +237,29 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def addDirectory(self):
-		""" Open a dialog to select a folder to add files from.
-		"""
+		"""Open a dialog to select a folder to add files from."""
+
 		dirname = self.folderDialog(self.getBrowseDir())
 		if dirname:
-			dirname = oswrapper.absolutePath(dirname)
+			dirname = os_wrapper.absolute_path(dirname)
 			self.lastDir = dirname
 			self.updateTaskListDir(dirname)
 
 
 	def addSequence(self):
-		""" Open a dialog to select files to add.
-		"""
+		"""Open a dialog to select files to add."""
+
 		filename = self.fileDialog(self.getBrowseDir())
 		if filename:
-			filename = oswrapper.absolutePath(filename)
+			filename = os_wrapper.absolute_path(filename)
 			self.lastDir = os.path.dirname(filename)
 			self.updateTaskListFile(filename)
 
 
 	def updateTaskListDir(self, dirpath):
-		""" Update task list with detected file sequences in given directory.
-			Pre-existing tasks will not be added, to avoid duplication.
+		"""Update task list with detected file sequences in given directory.
+
+		Pre-existing tasks will not be added, to avoid duplication.
 		"""
 		bases = sequence.getBases(dirpath, delimiter="")
 
@@ -258,8 +271,9 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def updateTaskListFile(self, filepath):
-		""" Update task list with detected file sequence given a file path.
-			Pre-existing tasks will not be added, to avoid duplication.
+		"""Update task list with detected file sequence given a file path.
+
+		Pre-existing tasks will not be added, to avoid duplication.
 		"""
 		if os.path.isfile(filepath):
 			path, prefix, fr_range, ext, num_frames = sequence.detectSeq(filepath, delimiter="", ignorePadding=False)
@@ -268,8 +282,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def removeSelection(self):
-		""" Removes selected items from the task list.
-		"""
+		"""Remove selected items from the task list."""
+
 		for item in self.ui.taskList_treeWidget.selectedItems():
 			index = self.ui.taskList_treeWidget.indexOfTopLevelItem(item)
 			self.ui.taskList_treeWidget.takeTopLevelItem(index)
@@ -278,15 +292,16 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def clearTaskList(self):
-		""" Clears the task list.
-		"""
+		"""Clear the task list."""
+
 		self.ui.taskList_treeWidget.clear()
 		self.updateToolbarUI()
 
 
 	def createTaskItem(self, path, prefix, fr_range, ext, num_frames):
-		""" Create a new task item, but only if a matching item doesn't
-			already exist.
+		"""Create a new task item.
+
+		But only if a matching item doesn't already exist.
 		"""
 		root = self.ui.taskList_treeWidget.invisibleRootItem()
 		child_count = root.childCount()
@@ -315,8 +330,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def updateTaskItem(self, index, status, path, prefix, fr_range, ext, num_frames):
-		""" Update the task item at a given index.
-		"""
+		"""Update the task item at a given index."""
+
 		root = self.ui.taskList_treeWidget.invisibleRootItem()
 		child_count = root.childCount()
 		index = int(index)
@@ -350,8 +365,8 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 
 	def updateTaskListView(self, updateStatus=True):
-		""" Populates the rename list tree view widget with entries.
-		"""
+		"""Populate the rename list tree view widget with entries."""
+
 		rename_count = 0
 		total_count = 0
 
@@ -385,13 +400,13 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 			# Add entries
 			if fr_range:
-				file = "%s[%s]%s" %(prefix, fr_range, ext)
+				file = "%s[%s]%s" % (prefix, fr_range, ext)
 			else:
-				file = "%s%s" %(prefix, ext)
+				file = "%s%s" % (prefix, ext)
 			item.setText(self.header("Before"), file)
 
 			if changeExt and self.ui.ext_lineEdit.text():
-				newExt = ".%s" %self.ui.ext_lineEdit.text()
+				newExt = ".%s" % self.ui.ext_lineEdit.text()
 			else:
 				newExt = ext
 
@@ -400,9 +415,9 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 				numLs = sequence.numList(fr_range)
 				renumberedLs, padding = rename.renumber(numLs, start, step, padding, preserve, autopad)
 				renumberedRange = sequence.numRange(renumberedLs, padding)
-				renamedFile = "%s[%s]%s" %(renamedPrefix, renumberedRange, newExt)
+				renamedFile = "%s[%s]%s" % (renamedPrefix, renumberedRange, newExt)
 			else:
-				renamedFile = "%s%s" %(renamedPrefix, newExt)
+				renamedFile = "%s%s" % (renamedPrefix, newExt)
 			item.setText(self.header("After"), renamedFile)
 
 			# Set icon to indicate status
@@ -442,7 +457,7 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			if rename_count == 1:
 				self.ui.rename_pushButton.setText("Rename 1 file")
 			else:
-				self.ui.rename_pushButton.setText("Rename %d files" %rename_count)
+				self.ui.rename_pushButton.setText("Rename %d files" % rename_count)
 
 		else:
 			self.ui.rename_pushButton.setText("Rename")
@@ -454,60 +469,32 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			self.ui.rename_pushButton.setEnabled(False)
 
 
-	def about(self):
-		""" Show about dialog.
-		"""
-		import about
-
-		info_ls = []
-		sep = " | "
-		for key, value in self.getInfo().items():
-			if key in ['Environment', 'OS']:
-				pass
-			else:
-				info_ls.append("{} {} ".format(key, value))
-		info_str = sep.join(info_ls)
-
-		about_msg = """
-%s
-v%s
-
-A tool for batch renaming and renumbering sequences of files.
-
-Developer: Mike Bonnington
-(c) 2016-2019
-
-%s
-""" % (cfg['window_title'], VERSION, info_str)
-
-		aboutDialog = about.AboutDialog(parent=self)
-		aboutDialog.display(icon_pixmap=self.iconTint('icon_rename.png', tint=QtGui.QColor(109, 113, 115)), message=about_msg)
-
-
 	def expandTask(self, item, column):
-		""" Open a new view showing the individual frames in a sequence when
-			the item is double-clicked.
+		"""Open a new view showing the individual frames in a sequence.
+
+		This is shown when an item is double-clicked.
 		"""
 		src_fileLs = sequence.expandSeq(item.text(self.header("Path")), item.text(self.header("Before")))
 		dst_fileLs = sequence.expandSeq(item.text(self.header("Path")), item.text(self.header("After")))
 
-		import rename_frame_view
 		try:
 			self.taskFrameViewUI.display(src_fileLs, dst_fileLs)
 		except AttributeError:
-			self.taskFrameViewUI = rename_frame_view.dialog(self)
+			self.taskFrameViewUI = frameview.dialog(self)
 			self.taskFrameViewUI.display(src_fileLs, dst_fileLs)
 
 
 	def checkConflicts(self):
-		""" Checks for conflicts in renamed files. - REWRITE THIS?
+		"""Check for conflicts in renamed files.
+
+		TODO: rewrite this?
 		"""
 		children = []
 		outputs = []
 		root = self.ui.taskList_treeWidget.invisibleRootItem()
 		for i in range(root.childCount()):
 			children.append(root.child(i))
-			outpath = "%s/%s" %(root.child(i).text(self.header("Path")), root.child(i).text(self.header("After")))
+			outpath = "%s/%s" % (root.child(i).text(self.header("Path")), root.child(i).text(self.header("After")))
 			outputs.append(outpath.lower())
 
 		# Find duplicate outputs
@@ -515,7 +502,7 @@ Developer: Mike Bonnington
 
 		# Highlight duplicates in list view
 		for item in children:
-			outpath = "%s/%s" %(item.text(self.header("Path")), item.text(self.header("After")))
+			outpath = "%s/%s" % (item.text(self.header("Path")), item.text(self.header("After")))
 			if outpath.lower() in conflicts:
 				item.setText(self.header("Status"), "Output filename conflict")
 				item.setIcon(self.header("Status"), self.icon['error'])
@@ -536,14 +523,14 @@ Developer: Mike Bonnington
 		self.ui.taskList_treeWidget.resizeColumnToContents(self.header("Status"))
 
 		if len(conflicts):
-			print("Warning: %d rename conflict(s) found." %len(conflicts))
+			print("Warning: %d rename conflict(s) found." % len(conflicts))
 
 		return len(conflicts)
 
 
 	def loadFindStr(self, item=None, column=0):
-		""" Copies the selected file name prefix to the 'Find' text field.
-		"""
+		"""Copy the selected file name prefix to the 'Find' text field."""
+
 		if not item:
 			item = self.ui.taskList_treeWidget.selectedItems()[0]
 
@@ -555,14 +542,15 @@ Developer: Mike Bonnington
 
 
 	def loadReplaceStr(self, item=None, column=0):
-		""" Copies the selected file name prefix to the 'Replace' text field.
-			Non-alphanumeric characters will be replaced with underscores.
+		"""Copy the selected file name prefix to the 'Replace' text field.
+
+		Non-alphanumeric characters will be replaced with underscores.
 		"""
 		if not item:
 			item = self.ui.taskList_treeWidget.selectedItems()[0]
 
 		text = item.text(self.header("Prefix"))
-		text = oswrapper.sanitize(text, pattern=r'[^\w\.-]', replace='_')
+		text = os_wrapper.sanitize(text, pattern=r'[^\w\.-]', replace='_')
 
 		if self.ui.replace_comboBox.findText(text) == -1:
 			self.ui.replace_comboBox.insertItem(0, text)
@@ -570,8 +558,8 @@ Developer: Mike Bonnington
 
 
 	def performFileRename(self):
-		""" Perform the file rename operation(s).
-		"""
+		"""Perform the file rename operation(s)."""
+
 		self.save()  # Save settings
 
 		root = self.ui.taskList_treeWidget.invisibleRootItem()
@@ -604,23 +592,24 @@ Developer: Mike Bonnington
 
 
 	def error(self, message):
-		""" Print an error message to stdout.
-			Use ANSI escape sequences to colour the text red.
+		"""Print an error message to stdout.
+
+		Use ANSI escape sequences to colour the text red.
 		"""
 		print('\033[38;5;197m' + "ERROR: " + message + '\033[0m')
 
 
 	@QtCore.Slot(int)
 	def updateProgressBar(self, value):
-		""" Update progress bar.
-		"""
+		"""Update progress bar."""
+
 		self.ui.rename_progressBar.setValue(value)
 
 
 	@QtCore.Slot(tuple)
 	def taskCompleted(self, new_task):
-		""" Update task in list view.
-		"""
+		"""Update task in list view."""
+
 		#print(new_task)
 		task_id, status, filepath = new_task
 		if os.path.isfile(filepath):
@@ -630,8 +619,8 @@ Developer: Mike Bonnington
 
 
 	def renameCompleted(self):
-		""" Function to execute when the rename operation finishes.
-		"""
+		"""Function to execute when the rename operation finishes."""
+
 		print("Batch rename job completed.")
 
 		self.ui.rename_pushButton.show()
@@ -640,8 +629,9 @@ Developer: Mike Bonnington
 
 
 	def cancelRename(self):
-		""" Stop the rename operation.
-			TODO: Need to clean up incomplete tasks
+		"""Stop the rename operation.
+
+		TODO: need to clean up incomplete tasks
 		"""
 		print("Aborting rename job.")
 		self.workerThread.terminate()  # Enclose in try/except?
@@ -664,15 +654,15 @@ Developer: Mike Bonnington
 
 
 	def dropEvent(self, e):
-		""" Event handler for files dropped on to the widget.
-		"""
+		"""Event handler for files dropped on to the widget."""
+
 		if e.mimeData().hasUrls:
 			e.setDropAction(QtCore.Qt.CopyAction)
 			e.accept()
 			for url in e.mimeData().urls():
 				fname = str(url.toLocalFile())
 
-			print("Dropped '%s' on to window." %fname)
+			print("Dropped '%s' on to window." % fname)
 
 			if os.path.isdir(fname):
 				self.updateTaskListDir(fname)
@@ -683,13 +673,11 @@ Developer: Mike Bonnington
 
 
 	def hideEvent(self, event):
-		""" Event handler for when window is hidden.
-		"""
+		"""Event handler for when window is hidden."""
+
 		self.save()  # Save settings
 		self.storeWindow()  # Store window geometry
-
-		# Store splitter size state
-		self.settings.setValue("splitterSizes", self.ui.splitter.saveState())
+		self.storeWidgetState(self.ui.splitter, "splitterSizes")  # Store splitter size state
 
 # ----------------------------------------------------------------------------
 # End main application class
@@ -698,8 +686,8 @@ Developer: Mike Bonnington
 # ----------------------------------------------------------------------------
 
 class BatchRenameThread(QtCore.QThread):
-	""" Worker thread class.
-	"""
+	"""Worker thread class."""
+
 	printError = QtCore.Signal(str)
 	printMessage = QtCore.Signal(str)
 	printProgress = QtCore.Signal(str)
@@ -724,12 +712,12 @@ class BatchRenameThread(QtCore.QThread):
 
 
 	def _rename_task(self, item):
-		""" Perform the file rename operation(s).
+		"""Perform the file rename operation(s).
 
-			Return a tuple containing the following items:
-			- the index of the task being processed;
-			- the status of the task;
-			- a filename to be processed as a new task.
+		Return a tuple containing the following items:
+		- the index of the task being processed;
+		- the status of the task;
+		- a filename to be processed as a new task.
 		"""
 		errors = 0
 		last_index = 0
@@ -746,15 +734,15 @@ class BatchRenameThread(QtCore.QThread):
 
 		# Only go ahead and rename if the operation will make changes
 		# if task_status == "Ready":
-		self.printMessage.emit("%s: Rename '%s' to '%s'" %(task_id, task_before, task_after))
+		self.printMessage.emit("%s: Rename '%s' to '%s'" % (task_id, task_before, task_after))
 		self.printMessage.emit("Renaming 0%")
 
 		for i in range(len(src_fileLs)):
-			success, msg = oswrapper.rename(src_fileLs[i], dst_fileLs[i], quiet=True)
+			success, msg = os_wrapper.rename(src_fileLs[i], dst_fileLs[i], quiet=True)
 			if success:
 				last_index = i
 				progress = (i/len(src_fileLs))*100
-				self.printProgress.emit("Renaming %d%%" %progress)
+				self.printProgress.emit("Renaming %d%%" % progress)
 			else:
 				errors += 1
 				self.printError.emit(msg)
@@ -772,23 +760,33 @@ class BatchRenameThread(QtCore.QThread):
 			if errors == 1:
 				error_str = "1 error"
 			else:
-				error_str = "%d errors" %errors
-			self.printMessage.emit("Task generated %s." %error_str)
+				error_str = "%d errors" % errors
+			self.printMessage.emit("Task generated %s." % error_str)
 			return task_id, error_str, dst_fileLs[last_index] #src_fileLs[-1]
 
 		# else:  # Task skipped
-		# 	self.printMessage.emit("%s: Rename task skipped." %task_id)
+		# 	self.printMessage.emit("%s: Rename task skipped." % task_id)
 		# 	return task_id, "Nothing to change", "" #src_fileLs[0]
 
 # ----------------------------------------------------------------------------
 # End worker thread class
 # ============================================================================
-# Run as standalone app
+# Run functions
 # ----------------------------------------------------------------------------
 
-if __name__ == "__main__":
-	app = QtWidgets.QApplication(sys.argv)
+def run(session):
+	"""Run inside host app."""
 
-	myApp = SequenceRenameApp()
-	myApp.show()
-	sys.exit(app.exec_())
+	try:  # Show the UI
+		session.seqRenameUI.show()
+	except:  # Create the UI
+		session.seqRenameUI = SequenceRenameApp(parent=UI._main_window())
+		session.seqRenameUI.show()
+
+
+# Run as standalone app
+if __name__ == "__main__":
+	main_app = QtWidgets.QApplication(sys.argv)
+	main_window = SequenceRenameApp()
+	main_window.show()
+	sys.exit(main_app.exec_())

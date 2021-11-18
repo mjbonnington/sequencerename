@@ -1,8 +1,8 @@
-#Compiled files
+# Compiled files
 *.pyc
 __pycache__
 
-#System files
+# System files
 .DS_Store
 .DS_Store?
 ._*
@@ -13,7 +13,7 @@ Thumbs.db
 *~
 ~*
 
-#Packages
+# Packages
 *.7z
 *.dmg
 *.gz
@@ -22,6 +22,3 @@ Thumbs.db
 *.rar
 *.tar
 *.zip
-
-#IDE stuff
-.idea
