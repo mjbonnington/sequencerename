@@ -103,12 +103,15 @@
            <bool>true</bool>
           </property>
           <property name="itemsExpandable">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="sortingEnabled">
            <bool>false</bool>
           </property>
           <property name="animated">
+           <bool>true</bool>
+          </property>
+          <property name="allColumnsShowFocus">
            <bool>true</bool>
           </property>
           <property name="headerHidden">

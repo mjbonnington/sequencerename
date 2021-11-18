@@ -2,7 +2,7 @@
 
 name = 'ic_seqrename'
 
-version = '0.1.4'
+version = '0.1.5'
 
 description = 'Sequence Rename Tool'
 
@@ -16,5 +16,6 @@ build_command = 'python {root}/build.py {install}'
 
 
 def commands():
+    env.PATH.append("{root}")
     env.PYTHONPATH.append('{root}')
     env.IC_ICONPATH.append('{root}/icons')

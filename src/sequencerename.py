@@ -193,6 +193,7 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 		self.expertMode = not self.expertMode
 		columns = ['Task', 'Prefix', 'Frames', 'Extension']
+		# columns = ['Prefix', 'Frames', 'Extension']
 
 		for column in columns:
 			self.ui.taskList_treeWidget.setColumnHidden(self.header(column), self.expertMode)
@@ -265,6 +266,7 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 		for base in bases:
 			path, prefix, fr_range, ext, num_frames = sequence.getSequence(dirpath, base, delimiter="", ignorePadding=False)
+			# group = self.createTaskGroupItem(path)
 			self.createTaskItem(path, prefix, fr_range, ext, num_frames)
 
 		self.updateTaskListView()
@@ -326,7 +328,33 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		new_item.setText(self.header("Frames"), fr_range)
 		new_item.setText(self.header("Extension"), ext)
 		new_item.setText(self.header("Count"), str(num_frames))
+
 		return new_item
+
+
+	# def createTaskGroupItem(self, path):
+	# 	"""Create a task group item.
+
+	# 	If a matching item already exists return that, otherwise create the
+	# 	new item and return it.
+
+	# 	Keyword Arguments:
+	# 		path (str) -- path to a folder containing file sequences.
+	# 	"""
+	# 	root = self.ui.taskList_treeWidget.invisibleRootItem()
+	# 	child_count = root.childCount()
+
+	# 	# Check if matching item already exists
+	# 	for i in range(child_count):
+	# 		item = root.child(i)
+	# 		if item.text(0) == path:
+	# 			print("Task group already exists.")
+	# 			return item
+
+	# 	new_item = QtWidgets.QTreeWidgetItem(self.ui.taskList_treeWidget)
+	# 	new_item.setText(0, path)
+	# 	new_item.setFirstColumnSpanned(True)
+	# 	return new_item
 
 
 	def updateTaskItem(self, index, status, path, prefix, fr_range, ext, num_frames):
@@ -388,6 +416,13 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		root = self.ui.taskList_treeWidget.invisibleRootItem()
 		child_count = root.childCount()
 
+		# task_items = []
+		# for i in range(root.childCount()):
+		# 	item = root.child(i)
+		# 	for j in range(item.childCount()):
+		# 		task_items.append(root.child(j))
+
+		# for i, item in enumerate(task_items):
 		for i in range(child_count):
 			item = root.child(i)
 
@@ -443,6 +478,7 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			total_count += num_frames
 
 		# Resize columns
+		# if task_items:
 		if child_count:
 			for col in range(self.ui.taskList_treeWidget.columnCount()):
 				self.ui.taskList_treeWidget.resizeColumnToContents(col)
@@ -662,14 +698,21 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			for url in e.mimeData().urls():
 				fname = str(url.toLocalFile())
 
-			print("Dropped '%s' on to window." % fname)
+				print("Dropped '%s' on to window." % fname)
 
-			if os.path.isdir(fname):
-				self.updateTaskListDir(fname)
-			elif os.path.isfile(fname):
-				self.updateTaskListFile(fname)
+				if os.path.isdir(fname):
+					self.updateTaskListDir(fname)
+				elif os.path.isfile(fname):
+					self.updateTaskListFile(fname)
 		else:
 			e.ignore()
+
+
+	# def showEvent(self, event):
+	# 	"""Event handler for when window is shown."""
+
+	# 	msg = "Add sequences to rename by dragging and dropping files or folders on to this window, or use the 'Add' button below."
+	# 	self.popup(message=msg, attachTo=self.ui.taskList_treeWidget)
 
 
 	def hideEvent(self, event):
@@ -786,6 +829,11 @@ def run(session):
 
 # Run as standalone app
 if __name__ == "__main__":
+	try:
+		QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
+	except AttributeError:
+		pass
+
 	main_app = QtWidgets.QApplication(sys.argv)
 	main_window = SequenceRenameApp()
 	main_window.show()
