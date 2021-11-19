@@ -78,9 +78,6 @@
           <property name="acceptDrops">
            <bool>true</bool>
           </property>
-          <property name="toolTip">
-           <string>Add sequences to rename by dragging and dropping files or folders on to this window, or use the 'Add' button below.</string>
-          </property>
           <property name="dragDropMode">
            <enum>QAbstractItemView::DropOnly</enum>
           </property>
@@ -103,7 +100,7 @@
            <bool>true</bool>
           </property>
           <property name="itemsExpandable">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="sortingEnabled">
            <bool>false</bool>
@@ -121,13 +118,8 @@
            <bool>false</bool>
           </property>
           <attribute name="headerStretchLastSection">
-           <bool>false</bool>
+           <bool>true</bool>
           </attribute>
-          <column>
-           <property name="text">
-            <string>Task</string>
-           </property>
-          </column>
           <column>
            <property name="text">
             <string>Status</string>
@@ -135,7 +127,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Count</string>
+            <string>Task</string>
            </property>
           </column>
           <column>
@@ -150,22 +142,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Path</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Prefix</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Frames</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Extension</string>
+            <string>Count</string>
            </property>
           </column>
          </widget>
@@ -366,7 +343,7 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-90</y>
              <width>427</width>
              <height>545</height>
             </rect>
@@ -955,12 +932,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>572</x>
-     <y>230</y>
+     <x>695</x>
+     <y>232</y>
     </hint>
     <hint type="destinationlabel">
-     <x>527</x>
-     <y>256</y>
+     <x>691</x>
+     <y>271</y>
     </hint>
    </hints>
   </connection>
@@ -971,12 +948,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>642</x>
-     <y>155</y>
+     <x>770</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
-     <x>479</x>
-     <y>181</y>
+     <x>588</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>
@@ -987,12 +964,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>642</x>
-     <y>155</y>
+     <x>770</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
-     <x>560</x>
-     <y>181</y>
+     <x>737</x>
+     <y>161</y>
     </hint>
    </hints>
   </connection>
@@ -1003,12 +980,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>642</x>
-     <y>155</y>
+     <x>770</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
-     <x>479</x>
-     <y>207</y>
+     <x>588</x>
+     <y>199</y>
     </hint>
    </hints>
   </connection>
@@ -1019,12 +996,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>642</x>
-     <y>155</y>
+     <x>770</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
-     <x>560</x>
-     <y>207</y>
+     <x>737</x>
+     <y>203</y>
     </hint>
    </hints>
   </connection>
@@ -1035,12 +1012,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>572</x>
-     <y>230</y>
+     <x>695</x>
+     <y>232</y>
     </hint>
     <hint type="destinationlabel">
-     <x>479</x>
-     <y>256</y>
+     <x>588</x>
+     <y>267</y>
     </hint>
    </hints>
   </connection>
@@ -1051,12 +1028,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>636</x>
-     <y>310</y>
+     <x>763</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel">
-     <x>781</x>
-     <y>336</y>
+     <x>927</x>
+     <y>348</y>
     </hint>
    </hints>
   </connection>
@@ -1067,12 +1044,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>636</x>
-     <y>310</y>
+     <x>763</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel">
-     <x>477</x>
-     <y>336</y>
+     <x>586</x>
+     <y>348</y>
     </hint>
    </hints>
   </connection>
