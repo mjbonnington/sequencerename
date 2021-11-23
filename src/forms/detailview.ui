@@ -132,7 +132,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="log_plainTextEdit"/>
+        <widget class="QPlainTextEdit" name="log_plainTextEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
