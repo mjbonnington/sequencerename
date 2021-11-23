@@ -6,7 +6,7 @@ version = '0.2.2'
 
 description = 'Sequence Rename Tool'
 
-variants = [['python-2.7']]
+variants = [['python-2.7+']]
 
 requires = ['ic_ui', 'ic_shared']
 
