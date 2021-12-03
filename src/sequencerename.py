@@ -25,7 +25,7 @@ import os_wrapper
 import rename
 import sequence
 import verbose
-from pprint import pprint
+# from pprint import pprint
 
 # ----------------------------------------------------------------------------
 # Configuration
@@ -439,7 +439,7 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 			else:
 				new_ext = item['ext']
 
-			renamed_prefix = rename.replaceTextRE(item['prefix'], find_str, replace_str, ignore_case, regex)
+			renamed_prefix = rename.replace_text(item['prefix'], find_str, replace_str, ignore_case, regex)
 			if item['frames']:  # If sequence
 				num_list = sequence.numList(item['frames'])
 				renumbered_list, padding = rename.renumber(num_list, start, step, padding, preserve, autopad)
@@ -919,6 +919,7 @@ def run(session):
 
 # Run as standalone app
 if __name__ == "__main__":
+	print("%s v%s" % (cfg['window_title'], os.getenv('REZ_IC_SEQRENAME_VERSION')))
 	try:
 		QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 	except AttributeError:
