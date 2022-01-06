@@ -3,7 +3,7 @@
 # detailview.py
 #
 # Mike Bonnington <mjbonnington@gmail.com>
-# (c) 2018-2021
+# (c) 2018-2022
 #
 # Sequence Rename Tool Task Detail View
 # A popup UI to display an expanded view of all the individual files in a
@@ -24,19 +24,15 @@ import sequence
 # Configuration
 # ----------------------------------------------------------------------------
 
-cfg = {}
+cfg = {
+	'window_object': "detailViewUI", 
+	'window_title': "Detail View", 
 
-# Set window title and object names
-cfg['window_object'] = "detailViewUI"
-cfg['window_title'] = "Detail View"
+	'ui_file': os.path.join(os.path.dirname(__file__), 'forms', 'detailview.ui'), 
+	'stylesheet': None, 
 
-# Set the UI and the stylesheet
-cfg['ui_file'] = os.path.join(os.path.dirname(__file__), 'forms', 'detailview.ui')
-cfg['stylesheet'] = None
-
-# Other options
-cfg['store_window_geometry'] = True
-
+	'store_window_geometry': True, 
+}
 
 # ----------------------------------------------------------------------------
 # Main dialog class

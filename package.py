@@ -2,7 +2,7 @@
 
 name = 'ic_seqrename'
 
-version = '0.2.3'
+version = '0.2.4'
 
 description = 'Sequence Rename Tool'
 

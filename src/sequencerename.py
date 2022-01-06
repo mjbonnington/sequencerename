@@ -3,7 +3,7 @@
 # sequencerename.py
 #
 # Mike Bonnington <mjbonnington@gmail.com>
-# (c) 2016-2021
+# (c) 2016-2022
 #
 # Sequence Rename Tool
 # A UI for batch renaming and renumbering sequences of files.
@@ -31,23 +31,21 @@ import verbose
 # Configuration
 # ----------------------------------------------------------------------------
 
-cfg = {}
-
-# Set window title and object names
-cfg['window_object'] = "seqRenameUI"
-cfg['window_title'] = "Sequence Rename"
-
-# Set the UI and the stylesheet
-cfg['ui_file'] = os.path.join(os.path.dirname(__file__), 'forms', 'sequencerename.ui')
-cfg['stylesheet'] = 'style.qss'
-cfg['icon'] = 'icon-rename.png'
-
-# Other options
 prefs_location = os.getenv('IC_USERPREFSDIR', os.path.expanduser('~/.sequencerename'))
 if not os.path.isdir(prefs_location):
 	os.makedirs(prefs_location)
-cfg['prefs_file'] = os.path.join(prefs_location, 'sequencerename_prefs.json')
-cfg['store_window_geometry'] = True
+
+cfg = {
+	'window_object': "seqRenameUI", 
+	'window_title': "Sequence Rename", 
+
+	'ui_file': os.path.join(os.path.dirname(__file__), 'forms', 'sequencerename.ui'), 
+	'stylesheet': 'style.qss', 
+	'icon': 'icon-rename.png', 
+
+	'prefs_file': os.path.join(prefs_location, 'sequencerename_prefs.json'), 
+	'store_window_geometry': True, 
+}
 
 # ----------------------------------------------------------------------------
 # Begin main application class
