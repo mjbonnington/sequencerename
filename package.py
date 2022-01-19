@@ -2,11 +2,11 @@
 
 name = 'ic_seqrename'
 
-version = '0.2.4'
+version = '0.2.5'
 
 description = 'Sequence Rename Tool'
 
-variants = [['python-2.7+']]
+# variants = [['python-2.7+']]
 
 requires = ['ic_ui', 'ic_shared']
 

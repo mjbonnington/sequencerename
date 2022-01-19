@@ -24,15 +24,15 @@ import sequence
 # Configuration
 # ----------------------------------------------------------------------------
 
-cfg = {
-	'window_object': "detailViewUI", 
-	'window_title': "Detail View", 
+cfg = dict(
+	app_name="Detail View", 
+	window_object="detailViewUI", 
 
-	'ui_file': os.path.join(os.path.dirname(__file__), 'forms', 'detailview.ui'), 
-	'stylesheet': None, 
+	ui_file=os.path.join(os.path.dirname(__file__), 'forms', 'detailview.ui'), 
+	stylesheet=None, 
 
-	'store_window_geometry': True, 
-}
+	store_window_geometry=True, 
+)
 
 # ----------------------------------------------------------------------------
 # Main dialog class
@@ -45,6 +45,7 @@ class dialog(QtWidgets.QDialog, UI.TemplateUI):
 		super(dialog, self).__init__(parent)
 		self.parent = parent
 
+		# UI template setup
 		self.setupUI(**cfg)
 
 		# Set window flags
@@ -65,7 +66,7 @@ class dialog(QtWidgets.QDialog, UI.TemplateUI):
 		except KeyError:
 			log = None
 
-		self.setWindowTitle("%s: Task %d" % (cfg['window_title'], task_id))
+		self.setWindowTitle("%s: Task %d" % (cfg['app_name'], task_id))
 		self.ui.path_lineEdit.setText(path)
 
 		self.ui.frameList_treeWidget.clear()

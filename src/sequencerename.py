@@ -35,17 +35,24 @@ prefs_location = os.getenv('IC_USERPREFSDIR', os.path.expanduser('~/.sequenceren
 if not os.path.isdir(prefs_location):
 	os.makedirs(prefs_location)
 
-cfg = {
-	'window_object': "seqRenameUI", 
-	'window_title': "Sequence Rename", 
+cfg = dict(
+	app_id="ic_seqrename",  # This should match the Rez package name
+	app_name="Sequence Rename", 
+	window_object="seqRenameUI", 
 
-	'ui_file': os.path.join(os.path.dirname(__file__), 'forms', 'sequencerename.ui'), 
-	'stylesheet': 'style.qss', 
-	'icon': 'icon-rename.png', 
+	vendor="mjbonnington", 
+	copyright="(c) 2016-2022", 
 
-	'prefs_file': os.path.join(prefs_location, 'sequencerename_prefs.json'), 
-	'store_window_geometry': True, 
-}
+	description="A tool for batch renaming and renumbering sequences of files.", 
+	credits="Principal developer: Mike Bonnington", 
+
+	ui_file=os.path.join(os.path.dirname(__file__), 'forms', 'sequencerename.ui'), 
+	stylesheet='style.qss', 
+	icon='icon-rename.png', 
+
+	prefs_file=os.path.join(prefs_location, 'sequencerename_prefs.json'), 
+	store_window_geometry=True, 
+)
 
 # ----------------------------------------------------------------------------
 # Begin main application class
@@ -58,11 +65,11 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		super(SequenceRenameApp, self).__init__(parent)
 		self.parent = parent
 
+		# UI template setup
 		self.setupUI(**cfg)
 		self.conformFormLayoutLabels(self.ui.sidebar_frame)
 
 		# Set window icon, flags and other Qt attributes
-		# self.setWindowIcon(self.iconSet(cfg['icon'], tintNormal=False))
 		self.setWindowFlags(QtCore.Qt.Window)
 		# self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
 
@@ -76,15 +83,6 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 
 		self.last_dir = None
 		self.expert_mode = False
-
-		# Set up about dialog
-		about = lambda: self.about(
-			app_name=cfg['window_title'], 
-			app_version="v" + os.getenv('REZ_IC_SEQRENAME_VERSION'), 
-			description="A tool for batch renaming and renumbering sequences of files.\n", 
-			credits="Developer: Mike Bonnington", 
-			icon=self.iconTint(cfg['icon']), 
-		)
 
 		# Define colours
 		# self.col = {}  # Already declared in ui_template.py
@@ -126,7 +124,7 @@ class SequenceRenameApp(QtWidgets.QMainWindow, UI.TemplateUI):
 		self.ui.clear_toolButton.clicked.connect(self.clear_task_list)
 		self.ui.rename_pushButton.clicked.connect(lambda: self.perform_file_rename(dry_run=True))
 		self.ui.cancel_pushButton.clicked.connect(self.cancel_rename)
-		self.ui.about_toolButton.clicked.connect(about)
+		self.ui.about_toolButton.clicked.connect(self.about_dialog)
 
 		# Set up context menus
 		self.addContextMenu(self.ui.add_toolButton, "Directory...", self.add_directory)
@@ -917,7 +915,6 @@ def run(session):
 
 # Run as standalone app
 if __name__ == "__main__":
-	print("%s v%s" % (cfg['window_title'], os.getenv('REZ_IC_SEQRENAME_VERSION')))
 	try:
 		QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 	except AttributeError:
