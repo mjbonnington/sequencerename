@@ -22,3 +22,6 @@ Thumbs.db
 *.rar
 *.tar
 *.zip
+
+# Build dirs
+build
