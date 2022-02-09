@@ -2,7 +2,7 @@
 
 name = 'ic_seqrename'
 
-version = '0.2.6'
+version = '0.2.7'
 
 description = 'Sequence Rename Tool'
 
@@ -24,3 +24,4 @@ def commands():
     env.PATH.append("{root}")
     env.PYTHONPATH.append('{root}')
     env.IC_ICONPATH.append('{root}/icons')
+    alias("sqrn", "python {root}/sequencerename.py")
