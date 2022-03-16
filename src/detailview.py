@@ -25,6 +25,7 @@ import sequence
 # ----------------------------------------------------------------------------
 
 cfg = dict(
+	app_id="ic_seqrename",  # This should match the Rez package name
 	app_name="Detail View", 
 	window_object="detailViewUI", 
 

@@ -343,9 +343,9 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-90</y>
-             <width>427</width>
-             <height>545</height>
+             <y>-120</y>
+             <width>431</width>
+             <height>572</height>
             </rect>
            </property>
            <property name="noBackground" stdset="0">
@@ -379,10 +379,10 @@
                <bool>false</bool>
               </property>
               <property name="checkable">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="checked">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="expandable" stdset="0">
                <bool>true</bool>
@@ -509,10 +509,10 @@
                <bool>false</bool>
               </property>
               <property name="checkable">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="checked">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="expandable" stdset="0">
                <bool>true</bool>
@@ -676,10 +676,10 @@
                <bool>false</bool>
               </property>
               <property name="checkable">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="checked">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="expandable" stdset="0">
                <bool>true</bool>

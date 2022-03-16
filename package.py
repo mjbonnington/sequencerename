@@ -2,26 +2,26 @@
 
 name = 'ic_seqrename'
 
-version = '0.2.7'
+version = '0.2.8'
 
 description = 'Sequence Rename Tool'
 
 authors = ['mjbonnington']
 
 requires = [
-    'ic_ui-2+', 
-    'ic_shared', 
+	'ic_ui-2+', 
+	'ic_shared', 
 ]
 
 build_requires = [
-    'rezlib', 
+	'rezlib', 
 ]
 
 build_command = 'python -m build {install}'
 
 
 def commands():
-    env.PATH.append("{root}")
-    env.PYTHONPATH.append('{root}')
-    env.IC_ICONPATH.append('{root}/icons')
-    alias("sqrn", "python {root}/sequencerename.py")
+	env.PATH.append("{root}")
+	env.PYTHONPATH.append('{root}')
+	env.IC_ICONPATH.append('{root}/icons')
+	alias("sqrn", "python {root}/sequencerename.py")
